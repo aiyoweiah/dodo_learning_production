@@ -435,6 +435,7 @@ export default function DodoEval() {
           /* Full-sheet cream background — margin handled by @page */
           html, body { background: #f5e8d7 !important; margin: 0 !important; padding: 0 !important; }
           .print-root { padding: 0 !important; box-sizing: border-box !important; background: #f5e8d7 !important; }
+          .print-root > div { padding: 0 !important; max-width: none !important; margin: 0 !important; }
           .site-header { box-shadow: none !important; }
 
         }
