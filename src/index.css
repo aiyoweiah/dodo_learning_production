@@ -109,3 +109,13 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+
+@media print {
+  #root {
+    width: 100%;
+    max-width: none;
+    border-inline: none;
+    text-align: left;
+  }
+}
