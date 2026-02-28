@@ -1,4 +1,4 @@
-// VERSION: 2.6
+// VERSION: 2.7
 // Last updated: 2026-02-28
 // DODO Learning — Student Baseline Report (DodoEval)
 
@@ -76,20 +76,20 @@ const COMMENT_POOL = {
     5: "Pronunciation is near-effortless. They have mastered the subtle musicality and linking of sounds found in natural speech. 发音几乎不费力。孩子掌握了自然口语中微妙的韵律感和连读技巧。",
   },
   conversational: {
-    0: "We did not evaluate the student in this area.",
-    1: "Your child can respond to simple questions but extended conversations are challenging. We're building that foundation.",
-    2: "Your child can hold a short conversation on familiar topics. They're developing strategies to keep dialogue going.",
-    3: "Your child converses well on known topics and is learning to manage unexpected turns in conversation.",
-    4: "Your child holds natural, engaging conversations and adapts their language to the listener.",
-    5: "Your child is a fluent, spontaneous conversationalist — natural, adaptive, and a joy to speak with.",
+    0: "We did not evaluate the student in this area. 尚未对此项能力进行评估。",
+    1: "Your child can respond to simple questions but extended conversations are challenging. We're building that foundation. 孩子目前能应对简单提问，但在展开长对话时略显吃力。我们正在着手夯实这方面的 Foundation。",
+    2: "Your child can hold a short conversation on familiar topics. They're developing strategies to keep dialogue going. 孩子能够围绕熟悉的话题进行简短交流，并正在学习如何运用策略来维持 Dialogue。",
+    3: "Your child converses well on known topics and is learning to manage unexpected turns in conversation. 在已知话题下表现良好，目前正处于学习如何应对对话中 Unexpected turns（突发转向）的阶段。",
+    4: "Your child holds natural, engaging conversations and adapts their language to the listener. 对话表现自然且具吸引力，能够根据听众的不同身份灵活调整 Language style。",
+    5: "Your child is a fluent, spontaneous conversationalist — natural, adaptive, and a joy to speak with. 表达极具自发性且流利。沟通风格灵活多变，是一位非常有感染力的 Conversationalist。",
   },
   listening: {
-    0: "We did not evaluate the student in this area.",
-    1: "Your child is learning to tune in to spoken English. Listening to English stories and videos daily makes a big difference.",
-    2: "Your child understands simple instructions and familiar topics. Comprehension drops with complex or fast speech.",
-    3: "Your child follows most classroom-level English well. Nuance and idiom are the next areas to develop.",
-    4: "Your child understands a wide range of spoken English, including unfamiliar topics. A strong listener.",
-    5: "Your child's listening comprehension is outstanding — they understand nuanced language, accents, and complex content with ease.",
+    0: "We did not evaluate the student in this area. 尚未对此项能力进行评估。",
+    1: "Your child is learning to tune in to spoken English. Listening to English stories and videos daily makes a big difference. 孩子正在学习如何"进入"英语语境。建议每日坚持接触 English stories 和视频，这对建立语感至关重要。",
+    2: "Your child understands simple instructions and familiar topics. Comprehension drops with complex or fast speech. 能够理解简单的指令和熟悉的主题。面对复杂或语速较快的表达时，Comprehension（理解力）仍有波动。",
+    3: "Your child follows most classroom-level English well. Nuance and idiom are the next areas to develop. 能够跟上大部分 Classroom-level English。接下来的进阶重点是理解语言中的 Nuance（细微差别）和地道表达。",
+    4: "Your child understands a wide range of spoken English, including unfamiliar topics. A strong listener. 听力理解范围广泛，即便面对不熟悉的 Topic 也能准确捕捉信息。表现非常稳健。",
+    5: "Your child's listening comprehension is outstanding — they understand nuanced language, accents, and complex content with ease. 听力表现卓越。无论是深层的语境、复杂的逻辑还是不同的 Accent（口音），都能轻松驾驭。",
   },
   sentences: {
     0: "We did not evaluate the student in this area.",
@@ -137,7 +137,7 @@ const RATING_COLORS = {
 
 const PILLARS = [
   {
-    id: "literacy", label: "Literacy", labelZh: "读写能力", icon: "",
+    id: "literacy", label: "Literacy", labelZh: "阅读理解", icon: "",
     color: B.brown, lightColor: B.brownLight,
     skills: [
       { id: "phonics",        label: "Phonics & Decoding",      labelZh: "自然拼读与解码" },
@@ -147,7 +147,7 @@ const PILLARS = [
     ],
   },
   {
-    id: "oral", label: "Oral Proficiency & Fluency", labelZh: "口语能力与流利度", icon: "",
+    id: "oral", label: "Oral Proficiency & Fluency", labelZh: "口语&流利度", icon: "",
     color: B.green, lightColor: B.greenLight,
     skills: [
       { id: "speaking",       label: "Speaking Confidence",     labelZh: "口语自信心" },
@@ -157,7 +157,7 @@ const PILLARS = [
     ],
   },
   {
-    id: "writing", label: "Writing & Composition", labelZh: "写作与写作能力", icon: "",
+    id: "writing", label: "Writing & Composition", labelZh: "构思&写作", icon: "",
     color: B.brownDark, lightColor: "#ede0d8",
     skills: [
       { id: "sentences",    label: "Sentence Structure",   labelZh: "句子结构" },
@@ -294,7 +294,7 @@ const PILLAR_GRADE_KEY = {
 
 const CURRICULUM = [
   {
-    pillar: "Literacy", pillarZh: "读写能力", icon: "", color: B.brown, lightColor: B.brownLight,
+    pillar: "Literacy", pillarZh: "阅读理解", icon: "", color: B.brown, lightColor: B.brownLight,
     match: "我们通过系统化的教学培养孩子的\"认知自动化\"，旨在将大脑从繁重的辨词任务中解放，从而释放更多精力用于高阶逻辑分析。数据表明，保持高频互动的学生通常能在6个月内实现一至两个年级的阅读水平突破，成功跨越从\"学习阅读\"到\"通过阅读来学习\"的关键转折点",
     modules: [
       { name: "Phonics Sprint", nameZh: "拼读冲刺", desc: "针对性自然拼读训练，结合可解码文本，专门解决学习者最常遇到的发音难题。" },
@@ -303,7 +303,7 @@ const CURRICULUM = [
     ],
   },
   {
-    pillar: "Oral Proficiency & Fluency", pillarZh: "口语能力与流利度", icon: "", color: B.green, lightColor: B.greenLight,
+    pillar: "Oral Proficiency & Fluency", pillarZh: "口语&流利度", icon: "", color: B.green, lightColor: B.greenLight,
     match: "我们坚信语言是鲜活的工具，而非枯燥的学科。每一堂课都经过精密设计，旨在最大化学生的\"有效口语输出时间\"，使学生从机械记忆转向真正的\"沟通胜任力\"。通过融入一对一朗读、辩论和叙事构建，我们成功架起了课堂理论与北美社交及学术环境所需的动态语言技能之间的桥梁。",
     modules: [
       { name: "Talk Time", nameZh: "口语时间", desc: "围绕学生感兴趣的真实生活场景设计的每周口语挑战活动。" },
@@ -312,7 +312,7 @@ const CURRICULUM = [
     ],
   },
   {
-    pillar: "Writing & Composition", pillarZh: "写作与写作能力", icon: "", color: B.brownDark, lightColor: "#ede0d8",
+    pillar: "Writing & Composition", pillarZh: "构思&写作", icon: "", color: B.brownDark, lightColor: "#ede0d8",
     match: "DODO Learning是一个相信写作能力能够改变孩子未来的教育品牌。我们将写作视为学生独立思考的终极体现。我们的课程旨在引导学生从\"机械造句者\"蜕变为拥有独特且自信笔触的\"创作者\"。通过运用范文教学（Mentor Texts）、图形组织工具以及专业的\"写作实验室\"模式——带领学生走过起草、修改到发表的严谨创作周期——我们确保其书面作品能够体现出在英语教育体系中脱颖而出所需的结构化逻辑与创意表达。",
     modules: [
       { name: "Sentence Gym", nameZh: "句子训练营", desc: "针对语法、标点和句型多样性的日常句子练习，夯实写作基础。" },
@@ -525,12 +525,12 @@ export default function DodoEval() {
               {/* Pillar Header */}
               <div style={{ background: pillar.color, color: B.cream, padding: "8px 14px", display: "flex", alignItems: "center", gap: 10 }}>
                 {pillar.icon && pillar.icon.trim() && <span style={{ fontSize: 16, marginRight: 2 }}>{pillar.icon}</span>}
-                <div>
+                <div style={{ textAlign: "left" }}>
                   <div style={{ fontSize: 9, letterSpacing: 2, textTransform: "uppercase", opacity: 0.6, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", marginBottom: 2 }}>Pillar · 核心领域</div>
-                  <div style={{ fontSize: 14, fontWeight: 700 }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, textAlign: "left" }}>
                     {pillar.label}
-                    <span style={{ fontSize: 11, fontWeight: 400, opacity: 0.8, marginLeft: 8, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif" }}>{pillar.labelZh}</span>
                   </div>
+                  <div style={{ fontSize: 11, fontWeight: 400, opacity: 0.8, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", textAlign: "left" }}>{pillar.labelZh}</div>
                 </div>
               </div>
 
@@ -565,16 +565,25 @@ export default function DodoEval() {
                     </div>
 
                     <div style={{ padding: "8px 10px", borderRight: `1px solid ${B.border}` }}>
-                      <select value={r != null ? r : ""} onChange={e => setRating(skill.id, e.target.value)}
+                      <input
+                        type="number"
+                        min={0}
+                        max={5}
+                        value={r != null ? r : ""}
+                        placeholder="0–5"
+                        onChange={e => {
+                          const val = e.target.value;
+                          if (val === "") { setRating(skill.id, ""); return; }
+                          const n = parseInt(val, 10);
+                          if (!isNaN(n) && n >= 0 && n <= 5) setRating(skill.id, val);
+                        }}
                         style={{
                           width: "100%", border: `2px solid ${rc ? rc.dot : B.border}`,
                           borderRadius: 6, padding: "5px 8px", fontSize: 12, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif",
                           background: rc ? rc.bg : B.white, color: rc ? rc.text : B.muted,
-                          fontWeight: 600, cursor: "pointer", outline: "none",
-                        }}>
-                        <option value="">— Select —</option>
-                        {[0,1,2,3,4,5].map(n => <option key={n} value={n}>{n} – {RATING_LABELS[n]}</option>)}
-                      </select>
+                          fontWeight: 600, outline: "none", boxSizing: "border-box",
+                        }}
+                      />
                       {r != null && (
                         <div style={{ display: "flex", alignItems: "center", gap: 5, marginTop: 4 }}>
                           <div style={{ width: 8, height: 8, borderRadius: "50%", background: rc.dot }} />
@@ -721,9 +730,10 @@ export default function DodoEval() {
             <div key={item.pillar} style={{ background: B.white, borderRadius: 10, marginBottom: 8, overflow: "hidden", boxShadow: "0 2px 12px rgba(122,81,69,0.08)", border: `1px solid ${B.border}` }}>
               <div style={{ background: item.color, color: B.cream, padding: "7px 14px", display: "flex", alignItems: "center", gap: 12 }}>
                 {item.icon && item.icon.trim() && <span style={{ fontSize: 16, marginRight: 2 }}>{item.icon}</span>}
-                <div>
-                  <div style={{ fontSize: 13, fontWeight: 700 }}>{item.pillar}</div>
-                  <div style={{ fontSize: 13, opacity: 0.72, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", marginTop: 2 }}>{item.pillarZh}</div>
+                <div style={{ textAlign: "left" }}>
+                  <div style={{ fontSize: 9, letterSpacing: 2, textTransform: "uppercase", opacity: 0.6, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", marginBottom: 2 }}>Pillar · 核心领域</div>
+                  <div style={{ fontSize: 13, fontWeight: 700, textAlign: "left" }}>{item.pillar}</div>
+                  <div style={{ fontSize: 13, opacity: 0.72, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", marginTop: 2, textAlign: "left" }}>{item.pillarZh}</div>
                 </div>
               </div>
               <div style={{ padding: "8px 14px" }}>
