@@ -595,6 +595,7 @@ export default function DodoEval() {
                   </div>
                 );
               })}
+            </div>
           ))}
 
           {/* Bottom bar */}
