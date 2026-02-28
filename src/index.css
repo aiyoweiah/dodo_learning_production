@@ -111,11 +111,3 @@ code {
 }
 
 
-@media print {
-  #root {
-    width: 100%;
-    max-width: none;
-    border-inline: none;
-    text-align: left;
-  }
-}
