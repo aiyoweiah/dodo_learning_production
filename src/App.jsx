@@ -1,8 +1,8 @@
-// VERSION: 2.6
+// VERSION: 2.7
 // Last updated: 2026-02-28
 // DODO Learning — Student Baseline Report (DodoEval)
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { LOGO_B64 } from "./assets/logo";
 
 // ─── BRAND ───────────────────────────────────────────────────────────────────
@@ -359,6 +359,17 @@ const GRADE_LEXILE = [
   { grade: "Grade 12", lexile: "1350+" },
 ];
 
+// ─── AUTO-RESIZING TEXTAREA ─────────────────────────────────────────────────
+// Resizes on both user input AND programmatic value changes (e.g. comment pool)
+const AutoTextarea = ({ value, style, ...props }) => {
+  const ref = useRef(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (el) { el.style.height = "auto"; el.style.height = el.scrollHeight + "px"; }
+  }, [value]);
+  return <textarea ref={ref} value={value} style={{ ...style, overflow: "hidden" }} {...props} />;
+};
+
 export default function DodoEval() {
   const [page, setPage] = useState(1);
   const [info, setInfo] = useState({
@@ -394,18 +405,19 @@ export default function DodoEval() {
     <div className="print-root" style={{ fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", minHeight: "100vh", background: B.cream, color: B.ink }}>
       <style>{`
         /* Interactive states (inline styles can't do :hover/:focus) */
-        select:focus, textarea:focus { outline: 2px solid #6b8e75 !important; }
-        select:hover { border-color: #6b8e75 !important; }
-        button:hover { opacity: 0.88; }
-        input:focus { outline: 2px solid #6b8e75 !important; }
+        .print-root select:focus, .print-root textarea:focus { outline: 2px solid #6b8e75 !important; }
+        .print-root select:hover { border-color: #6b8e75 !important; }
+        .print-root button:hover { opacity: 0.88; }
+        .print-root input:focus { outline: 2px solid #6b8e75 !important; }
         @media print {
           * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-          @page { size: 1700px 2200px; margin: 0; }
+          @page { size: 1870px 2420px; margin: 1in; }
 
           /* Show both screen pages in print */
           #print-page-1, #print-page-2 { display: block !important; }
 
-
+          /* Manual page break after tab 1 */
+          .print-page-break { break-after: page; page-break-after: always; }
 
           /* Hide all interactive/nav elements */
           .no-print { display: none !important; }
@@ -420,9 +432,9 @@ export default function DodoEval() {
           .print-only-comment { display: block !important; }
           textarea.no-print { display: none !important; }
 
-          /* Full-sheet cream background — @page margin is 0, padding handled by print-root */
+          /* Full-sheet cream background — margin handled by @page */
           html, body { background: #f5e8d7 !important; margin: 0 !important; padding: 0 !important; }
-          .print-root { padding: 1in !important; box-sizing: border-box !important; background: #f5e8d7 !important; }
+          .print-root { padding: 0 !important; box-sizing: border-box !important; background: #f5e8d7 !important; }
           .site-header { box-shadow: none !important; }
 
         }
@@ -571,12 +583,11 @@ export default function DodoEval() {
                     </div>
 
                     <div style={{ padding: "8px 10px" }}>
-                      <textarea className="no-print"
+                      <AutoTextarea className="no-print"
                         value={comments[skill.id] || ""}
                         onChange={e => setComments(c => ({ ...c, [skill.id]: e.target.value }))}
                         placeholder="Select a rating to auto-populate a comment…"
-                        style={{ width: "100%", border: `1.5px solid ${B.border}`, borderRadius: 6, padding: "6px 8px", fontSize: 12, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", resize: "none", background: B.cream, color: B.ink, outline: "none", boxSizing: "border-box", lineHeight: 1.5, overflow: "hidden", minHeight: 52 }}
-                        onInput={e => { e.target.style.height = "auto"; e.target.style.height = e.target.scrollHeight + "px"; }}
+                        style={{ width: "100%", border: `1.5px solid ${B.border}`, borderRadius: 6, padding: "6px 8px", fontSize: 12, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", resize: "none", background: B.cream, color: B.ink, outline: "none", boxSizing: "border-box", lineHeight: 1.5, minHeight: 52 }}
                       />
                       {/* Print mirror — browser may not render textarea value in PDF */}
                       <div className="print-only-comment" style={{ display: "none", fontSize: 12, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", lineHeight: 1.5, color: B.ink, whiteSpace: "pre-wrap", padding: "6px 8px", background: B.cream, borderRadius: 6, border: `1.5px solid ${B.border}`, minHeight: 52, boxSizing: "border-box" }}>
@@ -608,6 +619,9 @@ export default function DodoEval() {
             </button>
           </div>
         </div>
+
+        {/* Force page break after tab 1 in print */}
+        <div className="print-page-break" />
 
         {/* ════════════════════════ PAGE 2 ════════════════════════ */}
         <div id="print-page-2" style={{ display: page === 2 ? "block" : "none" }}>
