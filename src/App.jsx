@@ -1,4 +1,4 @@
-// VERSION: 2.7
+// VERSION: 2.9
 // Last updated: 2026-02-28
 // DODO Learning — Student Baseline Report (DodoEval)
 
@@ -20,11 +20,11 @@ const B = {
   white:      "#fffdf9",
 };
 
-// ─── LOGO SVG (recreated from brand mark) ────────────────────────────────────
-// LOGO_B64 imported from separate file — see src/assets/logo.js
+// ─── LOGO SVG ────────────────────────────────────────────────────────────────
 const DodoLogo = ({ size = 40 }) => (
   <img src={LOGO_B64} alt="DODO Learning" style={{ height: size, width: "auto", objectFit: "contain" }} />
 );
+
 // ─── COMMENT POOLS ───────────────────────────────────────────────────────────
 const COMMENT_POOL = {
   phonics: {
@@ -341,9 +341,6 @@ const labelCaptionStyle = {
   textTransform: "uppercase", color: B.muted, fontWeight: 700,
 };
 
-
-
-
 const GRADE_LEXILE = [
   { grade: "Grade 1",  lexile: "400+" },
   { grade: "Grade 2",  lexile: "600+" },
@@ -360,7 +357,6 @@ const GRADE_LEXILE = [
 ];
 
 // ─── AUTO-RESIZING TEXTAREA ─────────────────────────────────────────────────
-// Resizes on both user input AND programmatic value changes (e.g. comment pool)
 const AutoTextarea = ({ value, style, ...props }) => {
   const ref = useRef(null);
   useEffect(() => {
@@ -401,6 +397,38 @@ export default function DodoEval() {
   const ratedCount = Object.keys(ratings).filter(k => !isNaN(ratings[k])).length;
   const pct = Math.round((ratedCount / allSkills.length) * 100);
 
+  // Reusable header component to prevent print overlap while maintaining visibility on page 2
+  const sharedHeaderContent = (
+    <div style={{ maxWidth: 1300, margin: "0 auto", padding: "18px 28px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 14 }}>
+      {/* Logo area */}
+      <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+        <DodoLogo size={46} />
+        <div style={{ borderLeft: `1.5px solid rgba(122,81,69,0.25)`, paddingLeft: 16 }}>
+          <div style={{ fontSize: 12, letterSpacing: 3, textTransform: "uppercase", opacity: 0.65, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", fontWeight: 500 }}>DODO Learning · 都学学习</div>
+          <div style={{ fontSize: 18, fontWeight: 700, marginTop: 2 }}>
+            Student Baseline Report
+            <span style={{ fontSize: 13, fontWeight: 400, opacity: 0.72, marginLeft: 8, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif" }}>学生评估报告</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Nav tabs - kept visible in print per request */}
+      <div style={{ display: "flex", gap: 8 }}>
+        {[[1, "Results", "结果"], [2, "Consultation", "咨询"]].map(([p, en, zh]) => (
+          <button key={p} onClick={() => setPage(p)} style={{
+            padding: "9px 20px", borderRadius: 8, border: "none", cursor: "pointer",
+            fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", fontSize: 13, fontWeight: 600, lineHeight: 1.4, textAlign: "center",
+            background: page === p ? B.green : "rgba(122,81,69,0.12)",
+            color: page === p ? B.white : B.brown,
+            boxShadow: page === p ? `0 2px 8px rgba(0,0,0,0.18)` : "none",
+          }}>
+            {en}<br /><span style={{ fontSize: 11, opacity: 0.8 }}>{zh}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+
   return (
     <div className="print-root" style={{ fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", minHeight: "100vh", background: B.cream, color: B.ink }}>
       <style>{`
@@ -409,9 +437,12 @@ export default function DodoEval() {
         .print-root select:hover { border-color: #6b8e75 !important; }
         .print-root button:hover { opacity: 0.88; }
         .print-root input:focus { outline: 2px solid #6b8e75 !important; }
+
         @media print {
           * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-          @page { size: 1870px 2420px; margin: 1in; }
+          
+          /* Ensures standardized printer margins */
+          @page { size: portrait; margin: 15mm 20mm; }
 
           /* Show both screen pages in print */
           #print-page-1, #print-page-2 { display: block !important; }
@@ -419,73 +450,41 @@ export default function DodoEval() {
           /* Manual page break after tab 1 */
           .print-page-break { break-after: page; page-break-after: always; }
 
-          /* Hide all interactive/nav elements */
+          /* Hide specific interactive elements */
           .no-print { display: none !important; }
 
-          /* Repeat site header on every printed page */
-          .site-header { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background: #f5e8d7 !important; }
-          .print-content-spacer { display: block !important; height: 90px; }
+          /* CRITICAL HEADER FIX:
+            position: fixed causes overlapping on subsequent pages. 
+            We make it static, and simply render a second header for page 2.
+          */
+          .site-header { position: static !important; }
+          .print-only-header { display: block !important; margin-bottom: 24px; }
+          .print-content-spacer { display: none !important; }
 
-          /* Notes: hide textarea, show static div */
+          /* Notes & Comments: hide textarea, show static div for reliable print rendering */
           .print-only-notes { display: block !important; }
-
-          /* Comment cells: hide textarea, show static div */
           .print-only-comment { display: block !important; }
           textarea.no-print { display: none !important; }
 
           /* Never break tables, cards, or boxes across pages */
           .print-intact { break-inside: avoid; page-break-inside: avoid; }
 
-          /* Full-sheet cream background — margin handled by @page */
+          /* Full-sheet cream background — importantly, DO NOT zero out margins/padding on child elements */
           html, body { background: #f5e8d7 !important; margin: 0 !important; padding: 0 !important; }
-          .print-root { padding: 0 !important; box-sizing: border-box !important; background: #f5e8d7 !important; }
-          .print-root > div { padding: 0 !important; max-width: none !important; margin: 0 !important; }
-          .site-header { box-shadow: none !important; }
-
+          .print-root { background: #f5e8d7 !important; }
         }
       `}</style>
 
-      {/* ── HEADER ── */}
-      <header className="site-header" style={{ background: B.cream, color: B.ink, borderBottom: `2px solid rgba(107,142,117,0.25)`, boxShadow: "none" }}>
-        <div style={{ maxWidth: 1300, margin: "0 auto", padding: "18px 28px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 14 }}>
-
-          {/* Logo area */}
-          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-            <DodoLogo size={46} />
-            <div style={{ borderLeft: `1.5px solid rgba(122,81,69,0.25)`, paddingLeft: 16 }}>
-              <div style={{ fontSize: 12, letterSpacing: 3, textTransform: "uppercase", opacity: 0.65, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", fontWeight: 500 }}>DODO Learning · 都学学习</div>
-              <div style={{ fontSize: 18, fontWeight: 700, marginTop: 2 }}>
-                Student Baseline Report
-                <span style={{ fontSize: 13, fontWeight: 400, opacity: 0.72, marginLeft: 8, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif" }}>学生评估报告</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Nav tabs */}
-          <div style={{ display: "flex", gap: 8 }}>
-            {[[1, "Results", "结果"], [2, "Consultation", "咨询"]].map(([p, en, zh]) => (
-              <button key={p} onClick={() => setPage(p)} style={{
-                padding: "9px 20px", borderRadius: 8, border: "none", cursor: "pointer",
-                fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", fontSize: 13, fontWeight: 600, lineHeight: 1.4, textAlign: "center",
-                background: page === p ? B.green : "rgba(122,81,69,0.12)",
-                color: page === p ? B.white : B.brown,
-                boxShadow: page === p ? `0 2px 8px rgba(0,0,0,0.18)` : "none",
-              }}>
-                {en}<br /><span style={{ fontSize: 11, opacity: 0.8 }}>{zh}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-
+      {/* ── HEADER (Screen and Print Page 1) ── */}
+      <header className="site-header" style={{ position: "sticky", top: 0, zIndex: 1000, background: B.cream, color: B.ink, borderBottom: `2px solid rgba(107,142,117,0.25)`, boxShadow: "none" }}>
+        {sharedHeaderContent}
         {/* Progress bar */}
         <div style={{ background: "rgba(122,81,69,0.15)", height: 4 }}>
           <div style={{ height: 4, background: B.green, width: `${pct}%`, transition: "width 0.4s ease" }} />
         </div>
       </header>
 
-      {/* Spacer to prevent content overlapping the fixed header in print */}
-      <div className="print-content-spacer" style={{ display: "none" }} />
-
+      {/* Main Content Wrapper */}
       <div style={{ maxWidth: 1300, margin: "0 auto", padding: "24px 28px 52px" }}>
 
         {/* ════════════════════════ PAGE 1 ════════════════════════ */}
@@ -643,6 +642,13 @@ export default function DodoEval() {
         {/* ════════════════════════ PAGE 2 ════════════════════════ */}
         <div id="print-page-2" style={{ display: page === 2 ? "block" : "none" }}>
 
+          {/* Print-Only Header for Page 2 */}
+          <div className="print-only-header" style={{ display: "none" }}>
+            <div style={{ background: B.cream, borderBottom: `2px solid rgba(107,142,117,0.25)` }}>
+              {sharedHeaderContent}
+            </div>
+          </div>
+
           {/* Header */}
           <div style={{ marginBottom: 10 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
@@ -657,7 +663,6 @@ export default function DodoEval() {
               第一页的每一项评估结果，都直接对应DODO Learning的具体课程模块。以下将详细说明我们为您的孩子推荐的学习方向及长期的益处。
             </p>
           </div>
-
 
           {/* Lexile Boxes - above summary, centered */}
           <div className="print-intact" style={{ display: "flex", gap: 12, justifyContent: "center", marginBottom: 12 }}>
@@ -693,6 +698,7 @@ export default function DodoEval() {
               </div>
             </div>
           </div>
+          
           {/* Summary Badges */}
           <div style={{ fontSize: 11, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", letterSpacing: 2, textTransform: "uppercase", color: B.brown, fontWeight: 700, marginBottom: 12 }}>
             Summary · 各核心领域总结
