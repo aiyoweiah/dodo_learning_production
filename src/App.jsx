@@ -1,4 +1,4 @@
-// VERSION: 2.9
+// VERSION: 2.9.1
 // Last updated: 2026-02-28
 // DODO Learning — Student Baseline Report (DodoEval)
 
@@ -397,10 +397,9 @@ export default function DodoEval() {
   const ratedCount = Object.keys(ratings).filter(k => !isNaN(ratings[k])).length;
   const pct = Math.round((ratedCount / allSkills.length) * 100);
 
-  // Reusable header component to prevent print overlap while maintaining visibility on page 2
-  const sharedHeaderContent = (
+  // The Header content that repeats
+  const headerContent = (
     <div style={{ maxWidth: 1300, margin: "0 auto", padding: "18px 28px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 14 }}>
-      {/* Logo area */}
       <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
         <DodoLogo size={46} />
         <div style={{ borderLeft: `1.5px solid rgba(122,81,69,0.25)`, paddingLeft: 16 }}>
@@ -411,8 +410,6 @@ export default function DodoEval() {
           </div>
         </div>
       </div>
-
-      {/* Nav tabs - kept visible in print per request */}
       <div style={{ display: "flex", gap: 8 }}>
         {[[1, "Results", "结果"], [2, "Consultation", "咨询"]].map(([p, en, zh]) => (
           <button key={p} onClick={() => setPage(p)} style={{
@@ -438,353 +435,340 @@ export default function DodoEval() {
         .print-root button:hover { opacity: 0.88; }
         .print-root input:focus { outline: 2px solid #6b8e75 !important; }
 
+        /* Hidden on screen, active only in print */
+        .print-spacer-header { display: none; }
+
         @media print {
           * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-          
-          /* Ensures standardized printer margins */
           @page { size: portrait; margin: 15mm 20mm; }
 
-          /* Show both screen pages in print */
-          #print-page-1, #print-page-2 { display: block !important; }
+          /* The fixed header that repeats on every physical page */
+          .site-header { position: fixed !important; top: 0; left: 0; right: 0; width: 100%; z-index: 1000; background: #f5e8d7 !important; }
+          
+          /* The invisible table header spacer that pushes content down to prevent overlap */
+          .print-spacer-header { display: table-header-group !important; }
 
-          /* Manual page break after tab 1 */
-          .print-page-break { break-after: page; page-break-after: always; }
+          /* Force BOTH <tbody> sections to render on print */
+          .print-tbody { display: table-row-group !important; }
 
-          /* Hide specific interactive elements */
+          /* Force a clean page break between Tab 1 and Tab 2 */
+          .print-page-break-before { break-before: page !important; page-break-before: always !important; }
+
           .no-print { display: none !important; }
-
-          /* CRITICAL HEADER FIX:
-            position: fixed causes overlapping on subsequent pages. 
-            We make it static, and simply render a second header for page 2.
-          */
-          .site-header { position: static !important; }
-          .print-only-header { display: block !important; margin-bottom: 24px; }
-          .print-content-spacer { display: none !important; }
-
-          /* Notes & Comments: hide textarea, show static div for reliable print rendering */
-          .print-only-notes { display: block !important; }
-          .print-only-comment { display: block !important; }
+          .print-only-notes, .print-only-comment { display: block !important; }
           textarea.no-print { display: none !important; }
-
-          /* Never break tables, cards, or boxes across pages */
           .print-intact { break-inside: avoid; page-break-inside: avoid; }
 
-          /* Full-sheet cream background — importantly, DO NOT zero out margins/padding on child elements */
+          /* Keep background clean and remove margin overrides to preserve table formatting */
           html, body { background: #f5e8d7 !important; margin: 0 !important; padding: 0 !important; }
-          .print-root { background: #f5e8d7 !important; }
+          .print-root { background: #f5e8d7 !important; padding: 0 !important; }
+          td { background: transparent !important; } 
         }
       `}</style>
 
-      {/* ── HEADER (Screen and Print Page 1) ── */}
+      {/* ── ACTUAL FIXED HEADER ── */}
       <header className="site-header" style={{ position: "sticky", top: 0, zIndex: 1000, background: B.cream, color: B.ink, borderBottom: `2px solid rgba(107,142,117,0.25)`, boxShadow: "none" }}>
-        {sharedHeaderContent}
-        {/* Progress bar */}
+        {headerContent}
         <div style={{ background: "rgba(122,81,69,0.15)", height: 4 }}>
           <div style={{ height: 4, background: B.green, width: `${pct}%`, transition: "width 0.4s ease" }} />
         </div>
       </header>
 
-      {/* Main Content Wrapper */}
-      <div style={{ maxWidth: 1300, margin: "0 auto", padding: "24px 28px 52px" }}>
+      {/* ── MAIN CONTENT WRAPPED IN LAYOUT TABLE ── */}
+      <table style={{ width: "100%", borderSpacing: 0, borderCollapse: "collapse", border: "none" }}>
+        
+        {/* INVISIBLE SPACER: matches the height of the fixed header (approx 105px) */}
+        <thead className="print-spacer-header">
+          <tr><td><div style={{ height: "105px" }} /></td></tr>
+        </thead>
 
-        {/* ════════════════════════ PAGE 1 ════════════════════════ */}
-        <div id="print-page-1" style={{ display: page === 1 ? "block" : "none" }}>
-
-          {/* Student Info */}
-          <div className="print-intact" style={{ background: B.white, borderRadius: 14, padding: 14, marginBottom: 14, boxShadow: "0 2px 12px rgba(122,81,69,0.08)", border: `1px solid ${B.border}` }}>
-            <div style={{ marginBottom: 10, paddingBottom: 8, borderBottom: `1px solid ${B.border}` }}>
-              <span style={{ fontSize: 12, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", letterSpacing: 2, textTransform: "uppercase", color: B.brown, fontWeight: 700 }}>Student Information </span>
-              <span style={{ fontSize: 12, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", color: B.muted, fontWeight: 500 }}>学生信息</span>
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 10 }}>
-              {[
-                ["name",      "Student Name 学生姓名",       "text"],
-                ["age",       "Age 年龄",                    "number"],
-                ["grade",     "Grade / Year 年级",           "text"],
-                ["evaluator", "Evaluator 评估师",            "text"],
-              ].map(([k, label, type]) => (
-                <label key={k} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                  <span style={labelCaptionStyle}>{label}</span>
-                  <input type={type} value={info[k]} onChange={e => setInfo(i => ({ ...i, [k]: e.target.value }))} style={inputStyle} />
-                </label>
-              ))}
-
-              <label style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                <span style={labelCaptionStyle}>Assessment Phase 评估阶段</span>
-                <select value={info.phase} onChange={e => setInfo(i => ({ ...i, phase: e.target.value }))}
-                  style={{ ...inputStyle, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", fontSize: 14, cursor: "pointer" }}>
-                  {SESSION_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-                </select>
-              </label>
-
-              <label style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                <span style={labelCaptionStyle}>Evaluation Date 评估日期</span>
-                <input type="date" value={info.date} onChange={e => setInfo(i => ({ ...i, date: e.target.value }))} style={inputStyle} />
-              </label>
-            </div>
-          </div>
-
-          {/* Pillar Tables */}
-          {PILLARS.map(pillar => (
-            <div key={pillar.id} className="pillar-print-section print-intact" style={{ background: B.white, borderRadius: 10, marginBottom: 12, overflow: "hidden", boxShadow: "0 2px 12px rgba(122,81,69,0.08)", border: `1px solid ${B.border}` }}>
-
-              {/* Pillar Header */}
-              <div style={{ background: pillar.color, color: B.cream, padding: "8px 14px", display: "flex", alignItems: "center", gap: 10 }}>
-                {pillar.icon && pillar.icon.trim() && <span style={{ fontSize: 16, marginRight: 2 }}>{pillar.icon}</span>}
-                <div style={{ textAlign: "left" }}>
-                  <div style={{ fontSize: 9, letterSpacing: 2, textTransform: "uppercase", opacity: 0.6, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", marginBottom: 2 }}>Pillar · 核心领域</div>
-                  <div style={{ fontSize: 14, fontWeight: 700, textAlign: "left" }}>
-                    {pillar.label}
+        {/* ════════════════════════ PAGE 1 (Results) ════════════════════════ */}
+        <tbody className="print-tbody" style={{ display: page === 1 ? "table-row-group" : "none" }}>
+          <tr>
+            <td style={{ padding: 0 }}>
+              <div style={{ maxWidth: 1300, margin: "0 auto", padding: "24px 28px 52px" }}>
+                
+                {/* Student Info */}
+                <div className="print-intact" style={{ background: B.white, borderRadius: 14, padding: 14, marginBottom: 14, boxShadow: "0 2px 12px rgba(122,81,69,0.08)", border: `1px solid ${B.border}` }}>
+                  <div style={{ marginBottom: 10, paddingBottom: 8, borderBottom: `1px solid ${B.border}` }}>
+                    <span style={{ fontSize: 12, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", letterSpacing: 2, textTransform: "uppercase", color: B.brown, fontWeight: 700 }}>Student Information </span>
+                    <span style={{ fontSize: 12, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", color: B.muted, fontWeight: 500 }}>学生信息</span>
                   </div>
-                  <div style={{ fontSize: 11, fontWeight: 400, opacity: 0.8, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", textAlign: "left" }}>{pillar.labelZh}</div>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 10 }}>
+                    {[
+                      ["name",      "Student Name 学生姓名",       "text"],
+                      ["age",       "Age 年龄",                    "number"],
+                      ["grade",     "Grade / Year 年级",           "text"],
+                      ["evaluator", "Evaluator 评估师",            "text"],
+                    ].map(([k, label, type]) => (
+                      <label key={k} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                        <span style={labelCaptionStyle}>{label}</span>
+                        <input type={type} value={info[k]} onChange={e => setInfo(i => ({ ...i, [k]: e.target.value }))} style={inputStyle} />
+                      </label>
+                    ))}
+
+                    <label style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                      <span style={labelCaptionStyle}>Assessment Phase 评估阶段</span>
+                      <select value={info.phase} onChange={e => setInfo(i => ({ ...i, phase: e.target.value }))}
+                        style={{ ...inputStyle, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", fontSize: 14, cursor: "pointer" }}>
+                        {SESSION_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+                      </select>
+                    </label>
+
+                    <label style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                      <span style={labelCaptionStyle}>Evaluation Date 评估日期</span>
+                      <input type="date" value={info.date} onChange={e => setInfo(i => ({ ...i, date: e.target.value }))} style={inputStyle} />
+                    </label>
+                  </div>
                 </div>
-              </div>
 
-              {/* Column Headers */}
-              <div style={{ display: "grid", gridTemplateColumns: "minmax(160px,200px) minmax(190px,230px) 1fr", background: pillar.lightColor, borderBottom: `2px solid ${B.border}` }}>
-                {[
-                  ["Skill Area", "技能领域"],
-                  ["Assessment Rating", "评估等级"],
-                  ["What this means for your child", "这对您的孩子意味着什么"],
-                ].map(([en, zh]) => (
-                  <div key={en} style={{ padding: "6px 10px" }}>
-                    <div style={{ fontSize: 11, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", letterSpacing: 1, textTransform: "uppercase", color: pillar.color, fontWeight: 700 }}>{en}</div>
-                    <div style={{ fontSize: 11, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", color: B.muted, marginTop: 2 }}>{zh}</div>
-                  </div>
-                ))}
-              </div>
+                {/* Pillar Tables */}
+                {PILLARS.map(pillar => (
+                  <div key={pillar.id} className="pillar-print-section print-intact" style={{ background: B.white, borderRadius: 10, marginBottom: 12, overflow: "hidden", boxShadow: "0 2px 12px rgba(122,81,69,0.08)", border: `1px solid ${B.border}` }}>
 
-              {/* Skill Rows */}
-              {pillar.skills.map((skill, idx) => {
-                const r = ratings[skill.id];
-                const rc = r != null ? RATING_COLORS[r] : null;
-                return (
-                  <div key={skill.id} style={{
-                    display: "grid", gridTemplateColumns: "minmax(160px,200px) minmax(190px,230px) 1fr",
-                    borderBottom: idx < pillar.skills.length - 1 ? `1px solid ${B.border}` : "none",
-                    alignItems: "start",
-                    breakInside: "avoid", pageBreakInside: "avoid",
-                  }}>
-                    <div style={{ padding: "8px 10px", borderRight: `1px solid ${B.border}` }}>
-                      <div style={{ fontSize: 12, fontWeight: 600, color: B.ink }}>{skill.label}</div>
-                      <div style={{ fontSize: 10, color: B.muted, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", marginTop: 2 }}>{skill.labelZh}</div>
-                    </div>
-
-                    <div style={{ padding: "8px 10px", borderRight: `1px solid ${B.border}` }}>
-                      <input
-                        type="number"
-                        min={0}
-                        max={5}
-                        value={r != null ? r : ""}
-                        placeholder="0–5"
-                        onChange={e => {
-                          const val = e.target.value;
-                          if (val === "") { setRating(skill.id, ""); return; }
-                          const n = parseInt(val, 10);
-                          if (!isNaN(n) && n >= 0 && n <= 5) setRating(skill.id, val);
-                        }}
-                        style={{
-                          width: "100%", border: `2px solid ${rc ? rc.dot : B.border}`,
-                          borderRadius: 6, padding: "5px 8px", fontSize: 12, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif",
-                          background: rc ? rc.bg : B.white, color: rc ? rc.text : B.muted,
-                          fontWeight: 600, outline: "none", boxSizing: "border-box",
-                        }}
-                      />
-                      {r != null && (
-                        <div style={{ display: "flex", alignItems: "center", gap: 5, marginTop: 4 }}>
-                          <div style={{ width: 8, height: 8, borderRadius: "50%", background: rc.dot }} />
-                          <span style={{ fontSize: 11, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", color: rc.text, fontWeight: 700 }}>{RATING_LABELS[r]}</span>
+                    <div style={{ background: pillar.color, color: B.cream, padding: "8px 14px", display: "flex", alignItems: "center", gap: 10 }}>
+                      {pillar.icon && pillar.icon.trim() && <span style={{ fontSize: 16, marginRight: 2 }}>{pillar.icon}</span>}
+                      <div style={{ textAlign: "left" }}>
+                        <div style={{ fontSize: 9, letterSpacing: 2, textTransform: "uppercase", opacity: 0.6, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", marginBottom: 2 }}>Pillar · 核心领域</div>
+                        <div style={{ fontSize: 14, fontWeight: 700, textAlign: "left" }}>
+                          {pillar.label}
                         </div>
-                      )}
-                    </div>
-
-                    <div style={{ padding: "8px 10px" }}>
-                      <AutoTextarea className="no-print"
-                        value={comments[skill.id] || ""}
-                        onChange={e => setComments(c => ({ ...c, [skill.id]: e.target.value }))}
-                        placeholder="Select a rating to auto-populate a comment…"
-                        style={{ width: "100%", border: `1.5px solid ${B.border}`, borderRadius: 6, padding: "6px 8px", fontSize: 12, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", resize: "none", background: B.cream, color: B.ink, outline: "none", boxSizing: "border-box", lineHeight: 1.5, minHeight: 52 }}
-                      />
-                      {/* Print mirror — browser may not render textarea value in PDF */}
-                      <div className="print-only-comment" style={{ display: "none", fontSize: 12, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", lineHeight: 1.5, color: B.ink, whiteSpace: "pre-wrap", padding: "6px 8px", background: B.cream, borderRadius: 6, border: `1.5px solid ${B.border}`, minHeight: 52, boxSizing: "border-box" }}>
-                        {comments[skill.id] || ""}
+                        <div style={{ fontSize: 11, fontWeight: 400, opacity: 0.8, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", textAlign: "left" }}>{pillar.labelZh}</div>
                       </div>
-                      {r != null && COMMENT_POOL[skill.id] && (
-                        <select className="no-print" defaultValue="" onChange={e => { if (e.target.value) { setComments(c => ({ ...c, [skill.id]: e.target.value })); e.target.selectedIndex = 0; }}}
-                          style={{ marginTop: 6, width: "100%", fontSize: 12, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", border: `1px solid ${B.border}`, borderRadius: 6, padding: "5px 8px", background: B.white, color: B.muted, cursor: "pointer" }}>
-                          <option value=""> Swap comment from pool…</option>
-                          {Object.entries(COMMENT_POOL[skill.id]).map(([lvl, text]) => (
-                            <option key={lvl} value={text}>Level {lvl} – {RATING_LABELS[lvl]}: {text.slice(0,55)}…</option>
-                          ))}
-                        </select>
-                      )}
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-          ))}
 
-          {/* Bottom bar */}
-          <div className="print-intact" style={{ background: B.brown, borderRadius: 10, padding: "11px 16px", color: B.cream, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <div>
-              <div style={{ fontSize: 12, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", opacity: 0.7 }}>{ratedCount} of {allSkills.length} skills rated · 已评估 {ratedCount}/{allSkills.length} 项</div>
-            </div>
-            <button className="no-print" onClick={() => setPage(2)} style={{ padding: "8px 20px", background: B.green, color: B.white, border: "none", borderRadius: 8, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", fontWeight: 700, fontSize: 13, cursor: "pointer", boxShadow: "0 2px 8px rgba(0,0,0,0.2)" }}>
-              查看咨询报告 →
-            </button>
-          </div>
-        </div>
-
-        {/* Force page break after tab 1 in print */}
-        <div className="print-page-break" />
-
-        {/* ════════════════════════ PAGE 2 ════════════════════════ */}
-        <div id="print-page-2" style={{ display: page === 2 ? "block" : "none" }}>
-
-          {/* Print-Only Header for Page 2 */}
-          <div className="print-only-header" style={{ display: "none" }}>
-            <div style={{ background: B.cream, borderBottom: `2px solid rgba(107,142,117,0.25)` }}>
-              {sharedHeaderContent}
-            </div>
-          </div>
-
-          {/* Header */}
-          <div style={{ marginBottom: 10 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-              <div style={{ fontSize: 11, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", letterSpacing: 3, textTransform: "uppercase", color: B.muted, marginBottom: 10 }}>
-                Consultation Overview · 咨询概述
-              </div>
-            </div>
-            <h1 style={{ margin: 0, fontSize: 21, fontWeight: 700, color: B.brown, lineHeight: 1.2, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", textAlign: "center" }}>
-              「<em style={{ fontStyle: "normal", color: B.green }}>{info.name || "学生"}</em>」的个人化英语需求
-            </h1>
-            <p style={{ marginTop: 4, color: B.muted, lineHeight: 1.5, fontSize: 12, fontFamily: '"Avenir Next", "Avenir", sans-serif', textAlign: "center" }}>
-              第一页的每一项评估结果，都直接对应DODO Learning的具体课程模块。以下将详细说明我们为您的孩子推荐的学习方向及长期的益处。
-            </p>
-          </div>
-
-          {/* Lexile Boxes - above summary, centered */}
-          <div className="print-intact" style={{ display: "flex", gap: 12, justifyContent: "center", marginBottom: 12 }}>
-            <div style={{ background: B.greenLight, border: "1.5px solid " + B.border, borderRadius: 10, padding: "8px 14px", minWidth: 150, textAlign: "center" }}>
-              <div style={{ fontSize: 10, letterSpacing: 1.5, textTransform: "uppercase", color: B.green, marginBottom: 6, fontWeight: 700 }}>Proficient Lexile Level</div>
-              <select
-                value={proficientGrade}
-                onChange={e => setProficientGrade(e.target.value)}
-                style={{ fontSize: 14, fontWeight: 800, color: B.green, border: "none", background: "transparent", outline: "none", width: "100%", cursor: "pointer", textAlign: "center" }}
-              >
-                <option value="">Select Grade…</option>
-                {GRADE_LEXILE.map(g => (
-                  <option key={g.grade} value={g.grade}>{g.grade}</option>
-                ))}
-              </select>
-              {selectedGradeObj && (
-                <div style={{ marginTop: 2, fontSize: 12, color: B.green, fontWeight: 700 }}>
-                  Lexile {selectedGradeObj.lexile}
-                </div>
-              )}
-            </div>
-            <div style={{ background: B.brownLight, border: "1.5px solid " + B.border, borderRadius: 10, padding: "8px 14px", minWidth: 150, textAlign: "center" }}>
-              <div style={{ fontSize: 10, letterSpacing: 1.5, textTransform: "uppercase", color: B.brown, marginBottom: 6, fontWeight: 700 }}>Student Lexile Level</div>
-              <input
-                type="text"
-                placeholder="e.g. 720"
-                value={studentLexile}
-                onChange={e => setStudentLexile(e.target.value)}
-                style={{ fontSize: 14, fontWeight: 800, color: B.brown, border: "none", background: "transparent", outline: "none", width: "100%", padding: 0, textAlign: "center" }}
-              />
-              <div style={{ marginTop: 2, fontSize: 12, color: B.brown, fontWeight: 700 }}>
-                Current level
-              </div>
-            </div>
-          </div>
-          
-          {/* Summary Badges */}
-          <div style={{ fontSize: 11, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", letterSpacing: 2, textTransform: "uppercase", color: B.brown, fontWeight: 700, marginBottom: 12 }}>
-            Summary · 各核心领域总结
-          </div>
-          <div className="print-intact" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8, marginBottom: 10 }}>
-            {PILLARS.map(pillar => {
-              const scoredSkills = pillar.skills.filter(s => ratings[s.id] != null && ratings[s.id] > 0);
-              const avg = scoredSkills.length > 0 ? scoredSkills.reduce((a, s) => a + ratings[s.id], 0) / scoredSkills.length : 0;
-              const rounded = scoredSkills.length > 0 ? Math.round(avg) : null;
-              const rc = rounded ? RATING_COLORS[rounded] : { bg: "#f0ece8", text: B.muted, dot: B.border };
-              return (
-                <div key={pillar.id} style={{ borderRadius: 12, overflow: "hidden", boxShadow: "0 2px 10px rgba(122,81,69,0.1)", border: `1px solid ${B.border}` }}>
-                  <div style={{ background: pillar.color, color: B.cream, padding: "7px 10px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-                    <div style={{ fontSize: 14, fontWeight: 700, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif" }}>{pillar.label}</div>
-                    <div style={{ fontSize: 12, opacity: 0.72, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", marginTop: 2 }}>{pillar.labelZh}</div>
-                  </div>
-                  <div style={{ background: pillar.lightColor, padding: "5px 10px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
-                    <div style={{ fontSize: 11, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", color: B.muted, marginBottom: 7, textTransform: "uppercase", letterSpacing: 1 }}>平均等级</div>
-                    {rounded
-                      ? <div style={{ display: "inline-block", padding: "5px 13px", background: rc.bg, color: rc.text, borderRadius: 20, fontSize: 13, fontWeight: 700, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif" }}>
-                          {rounded} – {RATING_LABELS[rounded]}
+                    <div style={{ display: "grid", gridTemplateColumns: "minmax(160px,200px) minmax(190px,230px) 1fr", background: pillar.lightColor, borderBottom: `2px solid ${B.border}` }}>
+                      {[
+                        ["Skill Area", "技能领域"],
+                        ["Assessment Rating", "评估等级"],
+                        ["What this means for your child", "这对您的孩子意味着什么"],
+                      ].map(([en, zh]) => (
+                        <div key={en} style={{ padding: "6px 10px" }}>
+                          <div style={{ fontSize: 11, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", letterSpacing: 1, textTransform: "uppercase", color: pillar.color, fontWeight: 700 }}>{en}</div>
+                          <div style={{ fontSize: 11, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", color: B.muted, marginTop: 2 }}>{zh}</div>
                         </div>
-                      : <div style={{ color: B.border, fontSize: 13, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif" }}>暂未评估</div>}
+                      ))}
+                    </div>
+
+                    {pillar.skills.map((skill, idx) => {
+                      const r = ratings[skill.id];
+                      const rc = r != null ? RATING_COLORS[r] : null;
+                      return (
+                        <div key={skill.id} style={{
+                          display: "grid", gridTemplateColumns: "minmax(160px,200px) minmax(190px,230px) 1fr",
+                          borderBottom: idx < pillar.skills.length - 1 ? `1px solid ${B.border}` : "none",
+                          alignItems: "start",
+                          breakInside: "avoid", pageBreakInside: "avoid",
+                        }}>
+                          <div style={{ padding: "8px 10px", borderRight: `1px solid ${B.border}` }}>
+                            <div style={{ fontSize: 12, fontWeight: 600, color: B.ink }}>{skill.label}</div>
+                            <div style={{ fontSize: 10, color: B.muted, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", marginTop: 2 }}>{skill.labelZh}</div>
+                          </div>
+
+                          <div style={{ padding: "8px 10px", borderRight: `1px solid ${B.border}` }}>
+                            <input
+                              type="number"
+                              min={0}
+                              max={5}
+                              value={r != null ? r : ""}
+                              placeholder="0–5"
+                              onChange={e => {
+                                const val = e.target.value;
+                                if (val === "") { setRating(skill.id, ""); return; }
+                                const n = parseInt(val, 10);
+                                if (!isNaN(n) && n >= 0 && n <= 5) setRating(skill.id, val);
+                              }}
+                              style={{
+                                width: "100%", border: `2px solid ${rc ? rc.dot : B.border}`,
+                                borderRadius: 6, padding: "5px 8px", fontSize: 12, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif",
+                                background: rc ? rc.bg : B.white, color: rc ? rc.text : B.muted,
+                                fontWeight: 600, outline: "none", boxSizing: "border-box",
+                              }}
+                            />
+                            {r != null && (
+                              <div style={{ display: "flex", alignItems: "center", gap: 5, marginTop: 4 }}>
+                                <div style={{ width: 8, height: 8, borderRadius: "50%", background: rc.dot }} />
+                                <span style={{ fontSize: 11, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", color: rc.text, fontWeight: 700 }}>{RATING_LABELS[r]}</span>
+                              </div>
+                            )}
+                          </div>
+
+                          <div style={{ padding: "8px 10px" }}>
+                            <AutoTextarea className="no-print"
+                              value={comments[skill.id] || ""}
+                              onChange={e => setComments(c => ({ ...c, [skill.id]: e.target.value }))}
+                              placeholder="Select a rating to auto-populate a comment…"
+                              style={{ width: "100%", border: `1.5px solid ${B.border}`, borderRadius: 6, padding: "6px 8px", fontSize: 12, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", resize: "none", background: B.cream, color: B.ink, outline: "none", boxSizing: "border-box", lineHeight: 1.5, minHeight: 52 }}
+                            />
+                            <div className="print-only-comment" style={{ display: "none", fontSize: 12, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", lineHeight: 1.5, color: B.ink, whiteSpace: "pre-wrap", padding: "6px 8px", background: B.cream, borderRadius: 6, border: `1.5px solid ${B.border}`, minHeight: 52, boxSizing: "border-box" }}>
+                              {comments[skill.id] || ""}
+                            </div>
+                            {r != null && COMMENT_POOL[skill.id] && (
+                              <select className="no-print" defaultValue="" onChange={e => { if (e.target.value) { setComments(c => ({ ...c, [skill.id]: e.target.value })); e.target.selectedIndex = 0; }}}
+                                style={{ marginTop: 6, width: "100%", fontSize: 12, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", border: `1px solid ${B.border}`, borderRadius: 6, padding: "5px 8px", background: B.white, color: B.muted, cursor: "pointer" }}>
+                                <option value=""> Swap comment from pool…</option>
+                                {Object.entries(COMMENT_POOL[skill.id]).map(([lvl, text]) => (
+                                  <option key={lvl} value={text}>Level {lvl} – {RATING_LABELS[lvl]}: {text.slice(0,55)}…</option>
+                                ))}
+                              </select>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ))}
+
+                <div className="print-intact" style={{ background: B.brown, borderRadius: 10, padding: "11px 16px", color: B.cream, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <div>
+                    <div style={{ fontSize: 12, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", opacity: 0.7 }}>{ratedCount} of {allSkills.length} skills rated · 已评估 {ratedCount}/{allSkills.length} 项</div>
+                  </div>
+                  <button className="no-print" onClick={() => setPage(2)} style={{ padding: "8px 20px", background: B.green, color: B.white, border: "none", borderRadius: 8, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", fontWeight: 700, fontSize: 13, cursor: "pointer", boxShadow: "0 2px 8px rgba(0,0,0,0.2)" }}>
+                    查看咨询报告 →
+                  </button>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+
+        {/* ════════════════════════ PAGE 2 (Consultation) ════════════════════════ */}
+        <tbody className="print-tbody print-page-break-before" style={{ display: page === 2 ? "table-row-group" : "none" }}>
+          <tr>
+            <td style={{ padding: 0 }}>
+              <div style={{ maxWidth: 1300, margin: "0 auto", padding: "24px 28px 52px" }}>
+                
+                <div style={{ marginBottom: 10 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                    <div style={{ fontSize: 11, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", letterSpacing: 3, textTransform: "uppercase", color: B.muted, marginBottom: 10 }}>
+                      Consultation Overview · 咨询概述
+                    </div>
+                  </div>
+                  <h1 style={{ margin: 0, fontSize: 21, fontWeight: 700, color: B.brown, lineHeight: 1.2, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", textAlign: "center" }}>
+                    「<em style={{ fontStyle: "normal", color: B.green }}>{info.name || "学生"}</em>」的个人化英语需求
+                  </h1>
+                  <p style={{ marginTop: 4, color: B.muted, lineHeight: 1.5, fontSize: 12, fontFamily: '"Avenir Next", "Avenir", sans-serif', textAlign: "center" }}>
+                    第一页的每一项评估结果，都直接对应DODO Learning的具体课程模块。以下将详细说明我们为您的孩子推荐的学习方向及长期的益处。
+                  </p>
+                </div>
+
+                <div className="print-intact" style={{ display: "flex", gap: 12, justifyContent: "center", marginBottom: 12 }}>
+                  <div style={{ background: B.greenLight, border: "1.5px solid " + B.border, borderRadius: 10, padding: "8px 14px", minWidth: 150, textAlign: "center" }}>
+                    <div style={{ fontSize: 10, letterSpacing: 1.5, textTransform: "uppercase", color: B.green, marginBottom: 6, fontWeight: 700 }}>Proficient Lexile Level</div>
+                    <select
+                      value={proficientGrade}
+                      onChange={e => setProficientGrade(e.target.value)}
+                      style={{ fontSize: 14, fontWeight: 800, color: B.green, border: "none", background: "transparent", outline: "none", width: "100%", cursor: "pointer", textAlign: "center" }}
+                    >
+                      <option value="">Select Lexile…</option>
+                      {GRADE_LEXILE.map(g => (
+                        <option key={g.grade} value={g.grade}>Lexile {g.lexile}</option>
+                      ))}
+                    </select>
+                    {selectedGradeObj && (
+                      <div style={{ marginTop: 2, fontSize: 12, color: B.green, fontWeight: 700 }}>
+                        {selectedGradeObj.grade}
+                      </div>
+                    )}
+                  </div>
+                  <div style={{ background: B.brownLight, border: "1.5px solid " + B.border, borderRadius: 10, padding: "8px 14px", minWidth: 150, textAlign: "center" }}>
+                    <div style={{ fontSize: 10, letterSpacing: 1.5, textTransform: "uppercase", color: B.brown, marginBottom: 6, fontWeight: 700 }}>Student Lexile Level</div>
+                    <input
+                      type="text"
+                      placeholder="e.g. 720"
+                      value={studentLexile}
+                      onChange={e => setStudentLexile(e.target.value)}
+                      style={{ fontSize: 14, fontWeight: 800, color: B.brown, border: "none", background: "transparent", outline: "none", width: "100%", padding: 0, textAlign: "center" }}
+                    />
+                    <div style={{ marginTop: 2, fontSize: 12, color: B.brown, fontWeight: 700 }}>
+                      Current level
+                    </div>
                   </div>
                 </div>
-              );
-            })}
-          </div>
+                
+                <div style={{ fontSize: 11, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", letterSpacing: 2, textTransform: "uppercase", color: B.brown, fontWeight: 700, marginBottom: 12 }}>
+                  Summary · 各核心领域总结
+                </div>
+                <div className="print-intact" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8, marginBottom: 10 }}>
+                  {PILLARS.map(pillar => {
+                    const scoredSkills = pillar.skills.filter(s => ratings[s.id] != null && ratings[s.id] > 0);
+                    const avg = scoredSkills.length > 0 ? scoredSkills.reduce((a, s) => a + ratings[s.id], 0) / scoredSkills.length : 0;
+                    const rounded = scoredSkills.length > 0 ? Math.round(avg) : null;
+                    const rc = rounded ? RATING_COLORS[rounded] : { bg: "#f0ece8", text: B.muted, dot: B.border };
+                    return (
+                      <div key={pillar.id} style={{ borderRadius: 12, overflow: "hidden", boxShadow: "0 2px 10px rgba(122,81,69,0.1)", border: `1px solid ${B.border}` }}>
+                        <div style={{ background: pillar.color, color: B.cream, padding: "7px 10px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                          <div style={{ fontSize: 14, fontWeight: 700, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif" }}>{pillar.label}</div>
+                          <div style={{ fontSize: 12, opacity: 0.72, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", marginTop: 2 }}>{pillar.labelZh}</div>
+                        </div>
+                        <div style={{ background: pillar.lightColor, padding: "5px 10px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
+                          <div style={{ fontSize: 11, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", color: B.muted, marginBottom: 7, textTransform: "uppercase", letterSpacing: 1 }}>平均等级</div>
+                          {rounded
+                            ? <div style={{ display: "inline-block", padding: "5px 13px", background: rc.bg, color: rc.text, borderRadius: 20, fontSize: 13, fontWeight: 700, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif" }}>
+                                {rounded} – {RATING_LABELS[rounded]}
+                              </div>
+                            : <div style={{ color: B.border, fontSize: 13, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif" }}>暂未评估</div>}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
 
-          {/* Curriculum Cards */}
-          {CURRICULUM.map(item => (
-            <div key={item.pillar} className="print-intact" style={{ background: B.white, borderRadius: 10, marginBottom: 8, overflow: "hidden", boxShadow: "0 2px 12px rgba(122,81,69,0.08)", border: `1px solid ${B.border}` }}>
-              <div style={{ background: item.color, color: B.cream, padding: "7px 14px", display: "flex", alignItems: "center", gap: 12 }}>
-                {item.icon && item.icon.trim() && <span style={{ fontSize: 16, marginRight: 2 }}>{item.icon}</span>}
-                <div style={{ textAlign: "left" }}>
-                  <div style={{ fontSize: 9, letterSpacing: 2, textTransform: "uppercase", opacity: 0.6, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", marginBottom: 2 }}>Pillar · 核心领域</div>
-                  <div style={{ fontSize: 13, fontWeight: 700, textAlign: "left" }}>{item.pillar}</div>
-                  <div style={{ fontSize: 13, opacity: 0.72, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", marginTop: 2, textAlign: "left" }}>{item.pillarZh}</div>
-                </div>
-              </div>
-              <div style={{ padding: "8px 14px" }}>
-                <p style={{ margin: "0 0 6px", lineHeight: 1.5, fontSize: 11, color: B.ink, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif" }}>{item.match}</p>
-                <div style={{ fontSize: 11, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", letterSpacing: 2, textTransform: "uppercase", color: item.color, fontWeight: 700, marginBottom: 6 }}>
-                  Recommended Modules · 推荐课程模块
-                </div>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 6 }}>
-                  {(proficientGrade && GRADE_MODULES[proficientGrade]?.[PILLAR_GRADE_KEY[item.pillar]]?.length ? GRADE_MODULES[proficientGrade][PILLAR_GRADE_KEY[item.pillar]] : item.modules).map(mod => (
-                    <div key={`${item.pillar}-${mod.name}`} style={{ background: item.lightColor, border: `1px solid ${B.border}`, borderRadius: 8, padding: "10px" }}>
-                      <div style={{ fontSize: 13, fontWeight: 700, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", color: item.color }}> {mod.name}</div>
-                      <div style={{ fontSize: 12, color: B.muted, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", marginBottom: 8, marginTop: 3 }}>{mod.nameZh}</div>
-                      <div style={{ fontSize: 11, color: B.ink, lineHeight: 1.6, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif" }}>{mod.desc}</div>
+                {CURRICULUM.map(item => (
+                  <div key={item.pillar} className="print-intact" style={{ background: B.white, borderRadius: 10, marginBottom: 8, overflow: "hidden", boxShadow: "0 2px 12px rgba(122,81,69,0.08)", border: `1px solid ${B.border}` }}>
+                    <div style={{ background: item.color, color: B.cream, padding: "7px 14px", display: "flex", alignItems: "center", gap: 12 }}>
+                      {item.icon && item.icon.trim() && <span style={{ fontSize: 16, marginRight: 2 }}>{item.icon}</span>}
+                      <div style={{ textAlign: "left" }}>
+                        <div style={{ fontSize: 9, letterSpacing: 2, textTransform: "uppercase", opacity: 0.6, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", marginBottom: 2 }}>Pillar · 核心领域</div>
+                        <div style={{ fontSize: 13, fontWeight: 700, textAlign: "left" }}>{item.pillar}</div>
+                        <div style={{ fontSize: 13, opacity: 0.72, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", marginTop: 2, textAlign: "left" }}>{item.pillarZh}</div>
+                      </div>
                     </div>
-                  ))}
+                    <div style={{ padding: "8px 14px" }}>
+                      <p style={{ margin: "0 0 6px", lineHeight: 1.5, fontSize: 11, color: B.ink, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif" }}>{item.match}</p>
+                      <div style={{ fontSize: 11, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", letterSpacing: 2, textTransform: "uppercase", color: item.color, fontWeight: 700, marginBottom: 6 }}>
+                        Recommended Modules · 推荐课程模块
+                      </div>
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 6 }}>
+                        {(proficientGrade && GRADE_MODULES[proficientGrade]?.[PILLAR_GRADE_KEY[item.pillar]]?.length ? GRADE_MODULES[proficientGrade][PILLAR_GRADE_KEY[item.pillar]] : item.modules).map(mod => (
+                          <div key={`${item.pillar}-${mod.name}`} style={{ background: item.lightColor, border: `1px solid ${B.border}`, borderRadius: 8, padding: "10px" }}>
+                            <div style={{ fontSize: 13, fontWeight: 700, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", color: item.color }}> {mod.name}</div>
+                            <div style={{ fontSize: 12, color: B.muted, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", marginBottom: 8, marginTop: 3 }}>{mod.nameZh}</div>
+                            <div style={{ fontSize: 11, color: B.ink, lineHeight: 1.6, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif" }}>{mod.desc}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+
+                <div className={`print-intact${!notes ? " no-print" : ""}`} style={{ background: B.white, borderRadius: 14, padding: 14, boxShadow: "0 2px 12px rgba(122,81,69,0.08)", marginBottom: 12, border: `1px solid ${B.border}` }}>
+                  <div style={{ marginBottom: 12 }}>
+                    <span style={{ fontSize: 14, fontWeight: 700, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", color: B.brown }}> Evaluator's Notes </span>
+                    <span style={{ fontSize: 13, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", color: B.muted }}>评估师备注</span>
+                  </div>
+                  <textarea className="no-print" value={notes} onChange={e => setNotes(e.target.value)} rows={5}
+                    placeholder="在此添加个性化备注、下一步建议或家长沟通要点…"
+                    style={{ width: "100%", border: `1.5px solid ${B.border}`, borderRadius: 9, padding: "12px 14px", fontSize: 15, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", lineHeight: 1.8, resize: "vertical", background: B.cream, color: B.ink, outline: "none", boxSizing: "border-box" }} />
+                  <div className="print-only-notes" style={{ display: "none", fontSize: 14, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", lineHeight: 1.8, color: B.ink, whiteSpace: "pre-wrap" }}>
+                    {notes}
+                  </div>
                 </div>
+
+                <div className="no-print" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <button onClick={() => setPage(1)} style={{ padding: "11px 22px", background: "transparent", color: B.brown, border: `2px solid ${B.brown}`, borderRadius: 9, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", fontWeight: 700, fontSize: 14, cursor: "pointer" }}>
+                    ← 返回结果页
+                  </button>
+                  <button onClick={() => window.print()} style={{ padding: "11px 26px", background: B.brown, color: B.cream, border: "none", borderRadius: 9, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", fontWeight: 700, fontSize: 14, cursor: "pointer", boxShadow: "0 2px 8px rgba(0,0,0,0.15)" }}>
+                     打印 / 导出 PDF
+                  </button>
+                </div>
+
               </div>
-            </div>
-          ))}
-
-          {/* Evaluator Notes */}
-          <div className={`print-intact${!notes ? " no-print" : ""}`} style={{ background: B.white, borderRadius: 14, padding: 14, boxShadow: "0 2px 12px rgba(122,81,69,0.08)", marginBottom: 12, border: `1px solid ${B.border}` }}>
-            <div style={{ marginBottom: 12 }}>
-              <span style={{ fontSize: 14, fontWeight: 700, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", color: B.brown }}> Evaluator's Notes </span>
-              <span style={{ fontSize: 13, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", color: B.muted }}>评估师备注</span>
-            </div>
-            {/* Screen: editable textarea */}
-            <textarea className="no-print" value={notes} onChange={e => setNotes(e.target.value)} rows={5}
-              placeholder="在此添加个性化备注、下一步建议或家长沟通要点…"
-              style={{ width: "100%", border: `1.5px solid ${B.border}`, borderRadius: 9, padding: "12px 14px", fontSize: 15, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", lineHeight: 1.8, resize: "vertical", background: B.cream, color: B.ink, outline: "none", boxSizing: "border-box" }} />
-            {/* Print: static div — browsers don't reliably render textarea content in print */}
-            <div className="print-only-notes" style={{ display: "none", fontSize: 14, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", lineHeight: 1.8, color: B.ink, whiteSpace: "pre-wrap" }}>
-              {notes}
-            </div>
-          </div>
-
-          {/* Footer */}
-          <div className="no-print" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <button onClick={() => setPage(1)} style={{ padding: "11px 22px", background: "transparent", color: B.brown, border: `2px solid ${B.brown}`, borderRadius: 9, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", fontWeight: 700, fontSize: 14, cursor: "pointer" }}>
-              ← 返回结果页
-            </button>
-            <button onClick={() => window.print()} style={{ padding: "11px 26px", background: B.brown, color: B.cream, border: "none", borderRadius: 9, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", fontWeight: 700, fontSize: 14, cursor: "pointer", boxShadow: "0 2px 8px rgba(0,0,0,0.15)" }}>
-               打印 / 导出 PDF
-            </button>
-          </div>
-        </div>
-
-      </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   );
 }
