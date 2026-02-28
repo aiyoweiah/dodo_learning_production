@@ -1,4 +1,4 @@
-// VERSION: 2.9.1
+// VERSION: 2.9.2
 // Last updated: 2026-02-28
 // DODO Learning — Student Baseline Report (DodoEval)
 
@@ -167,7 +167,6 @@ const PILLARS = [
     ],
   },
 ];
-
 
 // ─── GRADE → RECOMMENDED MODULES ─────────────────────────────────────────────
 const BAND_12 = {
@@ -413,10 +412,12 @@ export default function DodoEval() {
       <div style={{ display: "flex", gap: 8 }}>
         {[[1, "Results", "结果"], [2, "Consultation", "咨询"]].map(([p, en, zh]) => (
           <button key={p} onClick={() => setPage(p)} style={{
-            padding: "9px 20px", borderRadius: 8, border: "none", cursor: "pointer",
+            padding: "9px 20px", borderRadius: 8, cursor: "pointer",
             fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", fontSize: 13, fontWeight: 600, lineHeight: 1.4, textAlign: "center",
-            background: page === p ? B.green : "rgba(122,81,69,0.12)",
+            // Fixed Print Styling: Swapped `rgba` for a solid brand color and added physical borders
+            background: page === p ? B.green : B.brownLight,
             color: page === p ? B.white : B.brown,
+            border: page === p ? `1px solid ${B.greenDark}` : `1px solid ${B.border}`,
             boxShadow: page === p ? `0 2px 8px rgba(0,0,0,0.18)` : "none",
           }}>
             {en}<br /><span style={{ fontSize: 11, opacity: 0.8 }}>{zh}</span>
@@ -697,11 +698,12 @@ export default function DodoEval() {
                     const rc = rounded ? RATING_COLORS[rounded] : { bg: "#f0ece8", text: B.muted, dot: B.border };
                     return (
                       <div key={pillar.id} style={{ borderRadius: 12, overflow: "hidden", boxShadow: "0 2px 10px rgba(122,81,69,0.1)", border: `1px solid ${B.border}` }}>
-                        <div style={{ background: pillar.color, color: B.cream, padding: "7px 10px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                        {/* Summary boxes styling explicitly overridden to use uniform Green branding */}
+                        <div style={{ background: B.green, color: B.cream, padding: "7px 10px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
                           <div style={{ fontSize: 14, fontWeight: 700, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif" }}>{pillar.label}</div>
                           <div style={{ fontSize: 12, opacity: 0.72, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", marginTop: 2 }}>{pillar.labelZh}</div>
                         </div>
-                        <div style={{ background: pillar.lightColor, padding: "5px 10px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
+                        <div style={{ background: B.greenLight, padding: "5px 10px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
                           <div style={{ fontSize: 11, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", color: B.muted, marginBottom: 7, textTransform: "uppercase", letterSpacing: 1 }}>平均等级</div>
                           {rounded
                             ? <div style={{ display: "inline-block", padding: "5px 13px", background: rc.bg, color: rc.text, borderRadius: 20, fontSize: 13, fontWeight: 700, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif" }}>
