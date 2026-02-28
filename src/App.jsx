@@ -1,4 +1,4 @@
-// VERSION: 2.9.2
+// VERSION: 2.9.3
 // Last updated: 2026-02-28
 // DODO Learning — Student Baseline Report (DodoEval)
 
@@ -104,7 +104,7 @@ const COMMENT_POOL = {
     1: "Mistakes are a sign of growth! We are focusing on capital letters and periods as the boundaries for their thoughts. 错误是进步的标志！我们目前的重点是掌握大小写和句号，为思维划定边界。",
     2: "Basic rules are stable, but they still need reminders for punctuation. We are focusing on consistent \"action words\" (tenses). 基础规则已稳定，但标点仍需提醒。我们目前的重点是保持动词时态的一致性。",
     3: "Your child has a solid grasp of most rules. We are now refining the finer points like complex tenses and commas. 孩子掌握了大部分规则。我们会精细化调整复杂时态和逗号的使用等细节。",
-    4: "Writing is grammatically accurate. Most errors are small and the child is beginning to catch them on their own. 写作语法准确。大多数错误都很细微，且孩子已经开始尝试自我纠正。",
+    4: "Writing is grammatically accurate. Most errors are small and the child is beginning to catch them on their own. 写作语法准确。大多数错误大多数错误都很细微，且孩子已经开始尝试自我纠正。",
     5: "Grammar is intuitive. Your child can use complex punctuation to enhance the reader's experience, going beyond basic rules. 语法已内化为直觉。孩子能利用复杂标点提升阅读体验，超越了基础规则的束缚。",
   },
   organisation: {
@@ -396,7 +396,7 @@ export default function DodoEval() {
   const ratedCount = Object.keys(ratings).filter(k => !isNaN(ratings[k])).length;
   const pct = Math.round((ratedCount / allSkills.length) * 100);
 
-  // The Header content that repeats
+  // The Header content that repeats - tabs removed
   const headerContent = (
     <div style={{ maxWidth: 1300, margin: "0 auto", padding: "18px 28px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 14 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
@@ -408,21 +408,6 @@ export default function DodoEval() {
             <span style={{ fontSize: 13, fontWeight: 400, opacity: 0.72, marginLeft: 8, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif" }}>学生评估报告</span>
           </div>
         </div>
-      </div>
-      <div style={{ display: "flex", gap: 8 }}>
-        {[[1, "Results", "结果"], [2, "Consultation", "咨询"]].map(([p, en, zh]) => (
-          <button key={p} onClick={() => setPage(p)} style={{
-            padding: "9px 20px", borderRadius: 8, cursor: "pointer",
-            fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", fontSize: 13, fontWeight: 600, lineHeight: 1.4, textAlign: "center",
-            // Fixed Print Styling: Swapped `rgba` for a solid brand color and added physical borders
-            background: page === p ? B.green : B.brownLight,
-            color: page === p ? B.white : B.brown,
-            border: page === p ? `1px solid ${B.greenDark}` : `1px solid ${B.border}`,
-            boxShadow: page === p ? `0 2px 8px rgba(0,0,0,0.18)` : "none",
-          }}>
-            {en}<br /><span style={{ fontSize: 11, opacity: 0.8 }}>{zh}</span>
-          </button>
-        ))}
       </div>
     </div>
   );
