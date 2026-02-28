@@ -1,4 +1,4 @@
-// VERSION: 2.8
+// VERSION: 2.7
 // Last updated: 2026-02-28
 // DODO Learning — Student Baseline Report (DodoEval)
 
@@ -172,7 +172,7 @@ const PILLARS = [
 // ─── GRADE → RECOMMENDED MODULES ─────────────────────────────────────────────
 const BAND_12 = {
   literacy: [
-    { name: "Main Idea", nameZh: "核心大意", desc: "引导孩子从故事中提取关键信息，学会用一句话概括'发生了什么'。这是建立逻辑思考的第一步，帮助孩子在阅读初期理清叙事主线。" },
+    { name: "Main Idea", nameZh: "核心大意", desc: "引导孩子从故事中提取关键信息，学会用一句话概括发生了什么。这是建立逻辑思考的第一步，帮助孩子在阅读初期理清叙事主线。" },
     { name: "Punctuation Pauses", nameZh: "标点停顿", desc: "通过识别句号和逗号，教会孩子在阅读时进行自然的节奏调节，培养语感。这不仅能提高朗读流利度，更有助于孩子理解句子的结构边界。" },
     { name: "Readers' Theater", nameZh: "读者剧场", desc: "通过角色扮演和趣味朗诵，让孩子在情境中练习表达，增强阅读的趣味性。这种互动方式能有效提升孩子的口语自信心和对文本的情感理解。" },
   ],
@@ -257,7 +257,7 @@ const BAND_910 = {
 };
 const BAND_1112 = {
   literacy: [
-    { name: "Literary Criticism & Theory", nameZh: "文学审视与理论", desc: "引导学生从历史、社会或心理学等不同理论维度来审视文学作品。这种多视角的学术分析能力，是学生迈入大学学术殿堂的敲门砖。" },
+    { name: "Literary Criticism & Theory", nameZh: "文学批评与理论", desc: "引导学生从历史、社会或心理学等不同理论维度来审视文学作品。这种多视角的学术分析能力，是学生迈入大学学术殿堂的敲门砖。" },
     { name: "Logical Fallacies", nameZh: "逻辑谬误", desc: "教会学生识别论证中的逻辑陷阱，培养严谨的理性思维和批判眼光。学生将学会构建无懈可击的论证体系，并能敏锐地拆解不实信息。" },
     { name: "Abstract Synthesis", nameZh: "抽象综合与研究方法", desc: "专注于长篇学术论文的逻辑架构，培养学生处理复杂数据和抽象理论的能力。通过对研究方法的系统学习，学生将具备高质量学术报告的专业素质。" },
   ],
@@ -269,7 +269,7 @@ const BAND_1112 = {
   writing: [
     { name: "The Scholarly Voice", nameZh: "学术笔触", desc: "培养客观、严谨、具有权威感的学术写作风格，适应长篇论文的要求。学生将学会使用高级专业词汇进行精准论述，实现向高等教育阶段的语言身份转型。" },
     { name: "Structural Fluidity", nameZh: "结构艺术与流变", desc: "突破传统的'五段式'模版，根据论点的复杂程度灵活设计文章架构。这种结构上的自由度代表了写作能力的最高境界，让形式完美服务于内容。" },
-    { name: "Abstract Synthesis", nameZh: "抽象表达与综合写作", desc: "挑战处理高度抽象的概念，并将其转化为逻辑清晰、证据详实的专业报告。学生将学会整合跨学科知识进行综合输出，展现出极高的智慧含量。" },
+    { name: "Abstract Synthesis", nameZh: "抽象表达与综合输出", desc: "挑战处理高度抽象的概念，并将其转化为逻辑清晰、证据详实的专业报告。学生将学会整合跨学科知识进行综合输出，展现出极高的智慧含量。" },
   ],
 };
 const GRADE_MODULES = {
@@ -411,7 +411,7 @@ export default function DodoEval() {
         .print-root input:focus { outline: 2px solid #6b8e75 !important; }
         @media print {
           * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-          @page { size: 1785px 2310px; margin: 158px; }
+          @page { size: 1870px 2420px; margin: 1in; }
 
           /* Show both screen pages in print */
           #print-page-1, #print-page-2 { display: block !important; }
@@ -422,8 +422,9 @@ export default function DodoEval() {
           /* Hide all interactive/nav elements */
           .no-print { display: none !important; }
 
-          /* Repeat header visible in print only */
-          .print-repeat-header { display: flex !important; }
+          /* Repeat site header on every printed page */
+          .site-header { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background: #f5e8d7 !important; }
+          .print-content-spacer { display: block !important; height: 90px; }
 
           /* Notes: hide textarea, show static div */
           .print-only-notes { display: block !important; }
@@ -432,8 +433,14 @@ export default function DodoEval() {
           .print-only-comment { display: block !important; }
           textarea.no-print { display: none !important; }
 
-          html, body { background: #f5e8d7 !important; }
-          .print-root { background: #f5e8d7 !important; }
+          /* Never break tables, cards, or boxes across pages */
+          .print-intact { break-inside: avoid; page-break-inside: avoid; }
+
+          /* Full-sheet cream background — margin handled by @page */
+          html, body { background: #f5e8d7 !important; margin: 0 !important; padding: 0 !important; }
+          .print-root { padding: 0 !important; box-sizing: border-box !important; background: #f5e8d7 !important; }
+          .print-root > div { padding: 0 !important; max-width: none !important; margin: 0 !important; }
+          .site-header { box-shadow: none !important; }
 
         }
       `}</style>
@@ -446,7 +453,7 @@ export default function DodoEval() {
           <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
             <DodoLogo size={46} />
             <div style={{ borderLeft: `1.5px solid rgba(122,81,69,0.25)`, paddingLeft: 16 }}>
-              <div style={{ fontSize: 12, letterSpacing: 3, textTransform: "uppercase", opacity: 0.65, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", fontWeight: 500 }}>DODO Learning | 都学语言</div>
+              <div style={{ fontSize: 12, letterSpacing: 3, textTransform: "uppercase", opacity: 0.65, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", fontWeight: 500 }}>DODO Learning · 都学学习</div>
               <div style={{ fontSize: 18, fontWeight: 700, marginTop: 2 }}>
                 Student Baseline Report
                 <span style={{ fontSize: 13, fontWeight: 400, opacity: 0.72, marginLeft: 8, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif" }}>学生评估报告</span>
@@ -476,13 +483,16 @@ export default function DodoEval() {
         </div>
       </header>
 
+      {/* Spacer to prevent content overlapping the fixed header in print */}
+      <div className="print-content-spacer" style={{ display: "none" }} />
+
       <div style={{ maxWidth: 1300, margin: "0 auto", padding: "24px 28px 52px" }}>
 
         {/* ════════════════════════ PAGE 1 ════════════════════════ */}
         <div id="print-page-1" style={{ display: page === 1 ? "block" : "none" }}>
 
           {/* Student Info */}
-          <div style={{ background: B.white, borderRadius: 14, padding: 14, marginBottom: 14, boxShadow: "0 2px 12px rgba(122,81,69,0.08)", border: `1px solid ${B.border}` }}>
+          <div className="print-intact" style={{ background: B.white, borderRadius: 14, padding: 14, marginBottom: 14, boxShadow: "0 2px 12px rgba(122,81,69,0.08)", border: `1px solid ${B.border}` }}>
             <div style={{ marginBottom: 10, paddingBottom: 8, borderBottom: `1px solid ${B.border}` }}>
               <span style={{ fontSize: 12, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", letterSpacing: 2, textTransform: "uppercase", color: B.brown, fontWeight: 700 }}>Student Information </span>
               <span style={{ fontSize: 12, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", color: B.muted, fontWeight: 500 }}>学生信息</span>
@@ -517,7 +527,7 @@ export default function DodoEval() {
 
           {/* Pillar Tables */}
           {PILLARS.map(pillar => (
-            <div key={pillar.id} className="pillar-print-section" style={{ background: B.white, borderRadius: 10, marginBottom: 12, overflow: "hidden", boxShadow: "0 2px 12px rgba(122,81,69,0.08)", border: `1px solid ${B.border}` }}>
+            <div key={pillar.id} className="pillar-print-section print-intact" style={{ background: B.white, borderRadius: 10, marginBottom: 12, overflow: "hidden", boxShadow: "0 2px 12px rgba(122,81,69,0.08)", border: `1px solid ${B.border}` }}>
 
               {/* Pillar Header */}
               <div style={{ background: pillar.color, color: B.cream, padding: "8px 14px", display: "flex", alignItems: "center", gap: 10 }}>
@@ -617,7 +627,7 @@ export default function DodoEval() {
           ))}
 
           {/* Bottom bar */}
-          <div style={{ background: B.brown, borderRadius: 10, padding: "11px 16px", color: B.cream, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div className="print-intact" style={{ background: B.brown, borderRadius: 10, padding: "11px 16px", color: B.cream, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <div>
               <div style={{ fontSize: 12, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", opacity: 0.7 }}>{ratedCount} of {allSkills.length} skills rated · 已评估 {ratedCount}/{allSkills.length} 项</div>
             </div>
@@ -632,16 +642,6 @@ export default function DodoEval() {
 
         {/* ════════════════════════ PAGE 2 ════════════════════════ */}
         <div id="print-page-2" style={{ display: page === 2 ? "block" : "none" }}>
-
-          {/* Print-only repeat header for consultation pages */}
-          <div className="print-repeat-header" style={{ display: "none", alignItems: "center", gap: 14, padding: "0 0 12px 0", borderBottom: `2px solid rgba(107,142,117,0.25)`, marginBottom: 16 }}>
-            <DodoLogo size={34} />
-            <div style={{ borderLeft: `1.5px solid rgba(122,81,69,0.25)`, paddingLeft: 14 }}>
-              <div style={{ fontSize: 10, letterSpacing: 2.5, textTransform: "uppercase", opacity: 0.6 }}>DODO Learning | 都学语言</div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: B.ink }}>Student Baseline Report</div>
-            </div>
-            <div style={{ marginLeft: "auto", fontSize: 11, color: B.muted }}>{info.name}{info.name && info.date ? " · " : ""}{info.date}</div>
-          </div>
 
           {/* Header */}
           <div style={{ marginBottom: 10 }}>
@@ -660,27 +660,24 @@ export default function DodoEval() {
 
 
           {/* Lexile Boxes - above summary, centered */}
-          <div style={{ display: "flex", gap: 12, justifyContent: "center", marginBottom: 12 }}>
+          <div className="print-intact" style={{ display: "flex", gap: 12, justifyContent: "center", marginBottom: 12 }}>
             <div style={{ background: B.greenLight, border: "1.5px solid " + B.border, borderRadius: 10, padding: "8px 14px", minWidth: 150, textAlign: "center" }}>
               <div style={{ fontSize: 10, letterSpacing: 1.5, textTransform: "uppercase", color: B.green, marginBottom: 6, fontWeight: 700 }}>Proficient Lexile Level</div>
-              {selectedGradeObj && (
-                <div style={{ fontSize: 14, fontWeight: 800, color: B.green }}>
-                  Lexile {selectedGradeObj.lexile}
-                </div>
-              )}
-              {!selectedGradeObj && (
-                <div style={{ fontSize: 14, fontWeight: 800, color: B.green, opacity: 0.4 }}>—</div>
-              )}
               <select
                 value={proficientGrade}
                 onChange={e => setProficientGrade(e.target.value)}
-                style={{ marginTop: 2, fontSize: 12, fontWeight: 700, color: B.green, border: "none", background: "transparent", outline: "none", width: "100%", cursor: "pointer", textAlign: "center" }}
+                style={{ fontSize: 14, fontWeight: 800, color: B.green, border: "none", background: "transparent", outline: "none", width: "100%", cursor: "pointer", textAlign: "center" }}
               >
                 <option value="">Select Grade…</option>
                 {GRADE_LEXILE.map(g => (
                   <option key={g.grade} value={g.grade}>{g.grade}</option>
                 ))}
               </select>
+              {selectedGradeObj && (
+                <div style={{ marginTop: 2, fontSize: 12, color: B.green, fontWeight: 700 }}>
+                  Lexile {selectedGradeObj.lexile}
+                </div>
+              )}
             </div>
             <div style={{ background: B.brownLight, border: "1.5px solid " + B.border, borderRadius: 10, padding: "8px 14px", minWidth: 150, textAlign: "center" }}>
               <div style={{ fontSize: 10, letterSpacing: 1.5, textTransform: "uppercase", color: B.brown, marginBottom: 6, fontWeight: 700 }}>Student Lexile Level</div>
@@ -700,7 +697,7 @@ export default function DodoEval() {
           <div style={{ fontSize: 11, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", letterSpacing: 2, textTransform: "uppercase", color: B.brown, fontWeight: 700, marginBottom: 12 }}>
             Summary · 各核心领域总结
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8, marginBottom: 10 }}>
+          <div className="print-intact" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8, marginBottom: 10 }}>
             {PILLARS.map(pillar => {
               const scoredSkills = pillar.skills.filter(s => ratings[s.id] != null && ratings[s.id] > 0);
               const avg = scoredSkills.length > 0 ? scoredSkills.reduce((a, s) => a + ratings[s.id], 0) / scoredSkills.length : 0;
@@ -708,11 +705,11 @@ export default function DodoEval() {
               const rc = rounded ? RATING_COLORS[rounded] : { bg: "#f0ece8", text: B.muted, dot: B.border };
               return (
                 <div key={pillar.id} style={{ borderRadius: 12, overflow: "hidden", boxShadow: "0 2px 10px rgba(122,81,69,0.1)", border: `1px solid ${B.border}` }}>
-                  <div style={{ background: B.brown, color: B.cream, padding: "7px 10px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                  <div style={{ background: pillar.color, color: B.cream, padding: "7px 10px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
                     <div style={{ fontSize: 14, fontWeight: 700, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif" }}>{pillar.label}</div>
                     <div style={{ fontSize: 12, opacity: 0.72, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", marginTop: 2 }}>{pillar.labelZh}</div>
                   </div>
-                  <div style={{ background: B.brownLight, padding: "5px 10px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
+                  <div style={{ background: pillar.lightColor, padding: "5px 10px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
                     <div style={{ fontSize: 11, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", color: B.muted, marginBottom: 7, textTransform: "uppercase", letterSpacing: 1 }}>平均等级</div>
                     {rounded
                       ? <div style={{ display: "inline-block", padding: "5px 13px", background: rc.bg, color: rc.text, borderRadius: 20, fontSize: 13, fontWeight: 700, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif" }}>
@@ -727,7 +724,7 @@ export default function DodoEval() {
 
           {/* Curriculum Cards */}
           {CURRICULUM.map(item => (
-            <div key={item.pillar} style={{ background: B.white, borderRadius: 10, marginBottom: 8, overflow: "hidden", boxShadow: "0 2px 12px rgba(122,81,69,0.08)", border: `1px solid ${B.border}` }}>
+            <div key={item.pillar} className="print-intact" style={{ background: B.white, borderRadius: 10, marginBottom: 8, overflow: "hidden", boxShadow: "0 2px 12px rgba(122,81,69,0.08)", border: `1px solid ${B.border}` }}>
               <div style={{ background: item.color, color: B.cream, padding: "7px 14px", display: "flex", alignItems: "center", gap: 12 }}>
                 {item.icon && item.icon.trim() && <span style={{ fontSize: 16, marginRight: 2 }}>{item.icon}</span>}
                 <div style={{ textAlign: "left" }}>
@@ -755,7 +752,7 @@ export default function DodoEval() {
           ))}
 
           {/* Evaluator Notes */}
-          <div className={!notes ? "no-print" : ""} style={{ background: B.white, borderRadius: 14, padding: 14, boxShadow: "0 2px 12px rgba(122,81,69,0.08)", marginBottom: 12, border: `1px solid ${B.border}` }}>
+          <div className={`print-intact${!notes ? " no-print" : ""}`} style={{ background: B.white, borderRadius: 14, padding: 14, boxShadow: "0 2px 12px rgba(122,81,69,0.08)", marginBottom: 12, border: `1px solid ${B.border}` }}>
             <div style={{ marginBottom: 12 }}>
               <span style={{ fontSize: 14, fontWeight: 700, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", color: B.brown }}> Evaluator's Notes </span>
               <span style={{ fontSize: 13, fontFamily: "\"Avenir Next\", \"Avenir\", sans-serif", color: B.muted }}>评估师备注</span>
